@@ -1,5 +1,6 @@
 Feature: Example feature
 
+  @SingleFlight
   Scenario: Reading documentation
     Given I am on the Cucumber.js GitHub repository
     When I go to the README file

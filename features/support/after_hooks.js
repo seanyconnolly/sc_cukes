@@ -1,8 +1,11 @@
+
+this.World = require("../support/world").World;
+
 var myAfterHooks = function () {
     this.After(function (callback) {
-
         console.log("after hook done");
 
+        this.end();
 
         callback();
     });
