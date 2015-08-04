@@ -1,51 +1,45 @@
-var webdriver = require('selenium-webdriver');
+var Webdriver = require('selenium-webdriver');
+var assert = require('assert')
 
-function World(callback) {
-    this.browser = new webdriver.Builder().
-        withCapabilities(webdriver.Capabilities.chrome()).
+var GoogleHomePage = require('../pages/GoogleHomePage.js')
+
+var WorldConstructor = function WorldConstructor(callback) {
+
+    this.browser = new Webdriver.Builder().
+        withCapabilities(Webdriver.Capabilities.chrome()).
         build();
 
-
     this.visit = function (path, callback) {
-        this.browser.get(path, function (err, browser, status) {
-            if (err) {
-                console.log("was error");
-                throw new Error(err.message);
-            }
-            console.log(status);
-            console.log("no error");
+        this.browser.get(path)
+        callback();
+    };
+
+    this.end = function (callback) {
+        this.browser.quit();
+        callback();
+    };
+
+    this.checkPageTitle = function (expectedText, callback) {
+        this.browser.sleep(1000);
+
+        this.browser.getTitle().then(function (actualText) {
+            console.log("log: --> " + actualText);
+            assert.equal(expectedText, actualText);
             callback();
         });
-    };
-
-    this.end = function () {
-        this.browser.quit();
-    };
-
-    this.log = function (txt, callback) {
-        console.log("---> " + txt);
-        callback();
     }
 
-    this.log = function (txt) {
-        console.log("---> " + txt);
+    this.waitForText = function (element, text) {
+        while (element.getText != text) {
+            this.browser.sleep(1000);
+            console.log("sleeping for 1 sec - text is :")
+        }
     }
 
+    this.googleHomePage = new GoogleHomePage(this.browser);
 
-    this.findByCss = function (css) {
-        return this.browser.findElement(webdriver.By.css(css));
-    }
-
-
-    this.waitFor = function (time) {
-        setTimeout(function () {
-            console.log('waiting for ' + time);
-            callback();
-        }, time);
-    };
-
-    callback(); // tell Cucumber we're finished and to use 'this' as the world instance
+    callback(); //
 }
 
-module.exports.World = World;
+module.exports.World = WorldConstructor;
 

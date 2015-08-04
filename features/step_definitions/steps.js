@@ -1,22 +1,20 @@
-var Page = require("../pages/GitHubHomePage");
-var page = new Page();
 
-module.exports = function () {
+var Steps = function() {
     this.World = require("../support/world").World;
 
-    this.Given(/^I am on the Cucumber.js GitHub repository$/, function (callback) {
-        this.log("step one ");
-        this.visit('https://github.com/cucumber/cucumber-js', callback);
+    this.Given(/^I go to google home page$/, function (callback) {
+        this.googleHomePage.gotoPage(callback);
     });
 
-    this.When(/^I go to the README file$/, function (callback) {
-        this.waitFor(5000);
-        this.log("step two ", callback);
+    this.When(/^I search for "(.*?)"$/, function (searchTerm, callback) {
+        this.googleHomePage.searchField().sendKeys(searchTerm);
+        this.googleHomePage.searchBtn().click();
+        callback();
     });
 
     this.Then(/^I should see "(.*)" as the page title$/, function (title, callback) {
-        this.waitFor(8000);
-        this.log("step 3 " + title, callback);
-        next();
+       this.checkPageTitle(title, callback);
     });
 };
+
+module.exports = Steps;
